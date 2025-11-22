@@ -10,10 +10,17 @@ let startX, startY;
 let initialDistance = 0;
 let initialScale = 1;
 
-// حجم الـ canvas المربع
-const CANVAS_SIZE = 500;
-canvas.width = CANVAS_SIZE;
-canvas.height = CANVAS_SIZE;
+// حجم العرض على الصفحة (مربع)
+const CANVAS_DISPLAY_SIZE = 500;
+
+// عامل تحسين الجودة
+const CANVAS_SCALE = 3;
+
+// ضبط الـ canvas الداخلي للحصول على جودة أعلى
+canvas.width = CANVAS_DISPLAY_SIZE * CANVAS_SCALE;
+canvas.height = CANVAS_DISPLAY_SIZE * CANVAS_SCALE;
+canvas.style.width = CANVAS_DISPLAY_SIZE + 'px';
+canvas.style.height = CANVAS_DISPLAY_SIZE + 'px';
 
 // الإطار
 frameImg.src = 'hamaddakmframe.png';
@@ -30,30 +37,28 @@ upload.addEventListener('change', (e) => {
     reader.readAsDataURL(file);
 });
 
-// رسم الصورة والإطار مع الحفاظ على جودة الإطار الأصلية
+// رسم الصورة والإطار بجودة عالية
 function draw() {
     if (!userImg.complete || !frameImg.complete) return;
 
-    ctx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // حساب أبعاد الصورة مع الحفاظ على النسبة داخل المربع
-    let ratio = Math.min(CANVAS_SIZE / userImg.width, CANVAS_SIZE / userImg.height);
+    // أبعاد الصورة داخل المربع مع الحفاظ على النسبة
+    let ratio = Math.min(canvas.width / userImg.width, canvas.height / userImg.height);
     const w = userImg.width * ratio * imgScale;
     const h = userImg.height * ratio * imgScale;
+    ctx.drawImage(userImg, imgX + (canvas.width - w)/2, imgY + (canvas.height - h)/2, w, h);
 
-    // رسم الصورة داخل الـ canvas
-    ctx.drawImage(userImg, imgX + (CANVAS_SIZE - w)/2, imgY + (CANVAS_SIZE - h)/2, w, h);
-
-    // رسم الإطار بجودة أصلية دون تشويه
-    const frameRatio = Math.min(CANVAS_SIZE / frameImg.width, CANVAS_SIZE / frameImg.height);
+    // رسم الإطار بجودة أصلية عالية
+    const frameRatio = Math.min(canvas.width / frameImg.width, canvas.height / frameImg.height);
     const frameW = frameImg.width * frameRatio;
     const frameH = frameImg.height * frameRatio;
-    const frameX = (CANVAS_SIZE - frameW) / 2;
-    const frameY = (CANVAS_SIZE - frameH) / 2;
+    const frameX = (canvas.width - frameW) / 2;
+    const frameY = (canvas.height - frameH) / 2;
     ctx.drawImage(frameImg, frameX, frameY, frameW, frameH);
 }
 
-// تحميل الصورة
+// تحميل الصورة بجودة عالية
 downloadBtn.addEventListener('click', () => {
     draw();
     const link = document.createElement('a');
@@ -65,13 +70,13 @@ downloadBtn.addEventListener('click', () => {
 // تحريك الصورة بالماوس
 canvas.addEventListener('mousedown', (e) => {
     isDragging = true;
-    startX = e.offsetX - imgX;
-    startY = e.offsetY - imgY;
+    startX = e.offsetX * CANVAS_SCALE - imgX;
+    startY = e.offsetY * CANVAS_SCALE - imgY;
 });
 canvas.addEventListener('mousemove', (e) => {
     if (isDragging) {
-        imgX = e.offsetX - startX;
-        imgY = e.offsetY - startY;
+        imgX = e.offsetX * CANVAS_SCALE - startX;
+        imgY = e.offsetY * CANVAS_SCALE - startY;
         draw();
     }
 });
@@ -92,8 +97,8 @@ canvas.addEventListener('touchstart', (e) => {
     if (e.touches.length === 1) {
         isDragging = true;
         const rect = canvas.getBoundingClientRect();
-        startX = e.touches[0].clientX - rect.left - imgX;
-        startY = e.touches[0].clientY - rect.top - imgY;
+        startX = (e.touches[0].clientX - rect.left) * CANVAS_SCALE - imgX;
+        startY = (e.touches[0].clientY - rect.top) * CANVAS_SCALE - imgY;
     } else if (e.touches.length === 2) {
         isDragging = false;
         initialDistance = Math.hypot(
@@ -107,8 +112,8 @@ canvas.addEventListener('touchmove', (e) => {
     e.preventDefault();
     const rect = canvas.getBoundingClientRect();
     if (e.touches.length === 1 && isDragging) {
-        imgX = e.touches[0].clientX - rect.left - startX;
-        imgY = e.touches[0].clientY - rect.top - startY;
+        imgX = (e.touches[0].clientX - rect.left) * CANVAS_SCALE - startX;
+        imgY = (e.touches[0].clientY - rect.top) * CANVAS_SCALE - startY;
         draw();
     } else if (e.touches.length === 2) {
         const currentDistance = Math.hypot(
