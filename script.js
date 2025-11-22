@@ -30,7 +30,7 @@ upload.addEventListener('change', (e) => {
     reader.readAsDataURL(file);
 });
 
-// رسم الصورة والإطار
+// رسم الصورة والإطار مع الحفاظ على جودة الإطار الأصلية
 function draw() {
     if (!userImg.complete || !frameImg.complete) return;
 
@@ -41,10 +41,16 @@ function draw() {
     const w = userImg.width * ratio * imgScale;
     const h = userImg.height * ratio * imgScale;
 
+    // رسم الصورة داخل الـ canvas
     ctx.drawImage(userImg, imgX + (CANVAS_SIZE - w)/2, imgY + (CANVAS_SIZE - h)/2, w, h);
 
-    // رسم الإطار على كامل المربع
-    ctx.drawImage(frameImg, 0, 0, CANVAS_SIZE, CANVAS_SIZE);
+    // رسم الإطار بجودة أصلية دون تشويه
+    const frameRatio = Math.min(CANVAS_SIZE / frameImg.width, CANVAS_SIZE / frameImg.height);
+    const frameW = frameImg.width * frameRatio;
+    const frameH = frameImg.height * frameRatio;
+    const frameX = (CANVAS_SIZE - frameW) / 2;
+    const frameY = (CANVAS_SIZE - frameH) / 2;
+    ctx.drawImage(frameImg, frameX, frameY, frameW, frameH);
 }
 
 // تحميل الصورة
@@ -81,7 +87,7 @@ canvas.addEventListener('wheel', (e) => {
     draw();
 });
 
-// دعم اللمس للموبايل (سحب + pinch zoom)
+// دعم اللمس للموبايل
 canvas.addEventListener('touchstart', (e) => {
     if (e.touches.length === 1) {
         isDragging = true;
