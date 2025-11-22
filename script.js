@@ -2,7 +2,6 @@ const upload = document.getElementById('upload');
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const downloadBtn = document.getElementById('download');
-
 let userImg = new Image();
 let frameImg = new Image();
 let imgX = 0, imgY = 0, imgScale = 1;
@@ -11,7 +10,12 @@ let startX, startY;
 let initialDistance = 0;
 let initialScale = 1;
 
-// اسم الإطار مضبوط
+// حجم الـ canvas المربع
+const CANVAS_SIZE = 500;
+canvas.width = CANVAS_SIZE;
+canvas.height = CANVAS_SIZE;
+
+// الإطار
 frameImg.src = 'hamaddakmframe.png';
 
 // رفع صورة المستخدم
@@ -26,27 +30,26 @@ upload.addEventListener('change', (e) => {
     reader.readAsDataURL(file);
 });
 
-// رسم الصورة والإطار بأبعاد الصورة الأصلية للحفاظ على الجودة
+// رسم الصورة والإطار
 function draw() {
     if (!userImg.complete || !frameImg.complete) return;
 
-    // الكانفاس يوازي أبعاد الصورة الأصلية
-    canvas.width = userImg.width;
-    canvas.height = userImg.height;
+    ctx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // حساب أبعاد الصورة مع الحفاظ على النسبة داخل المربع
+    let ratio = Math.min(CANVAS_SIZE / userImg.width, CANVAS_SIZE / userImg.height);
+    const w = userImg.width * ratio * imgScale;
+    const h = userImg.height * ratio * imgScale;
 
-    const w = userImg.width * imgScale;
-    const h = userImg.height * imgScale;
-    ctx.drawImage(userImg, imgX, imgY, w, h);
+    ctx.drawImage(userImg, imgX + (CANVAS_SIZE - w)/2, imgY + (CANVAS_SIZE - h)/2, w, h);
 
-    // رسم الإطار بنفس أبعاد الكانفاس
-    ctx.drawImage(frameImg, 0, 0, canvas.width, canvas.height);
+    // رسم الإطار على كامل المربع
+    ctx.drawImage(frameImg, 0, 0, CANVAS_SIZE, CANVAS_SIZE);
 }
 
-// تحميل الصورة مع الإطار بأعلى جودة
+// تحميل الصورة
 downloadBtn.addEventListener('click', () => {
-    draw(); // تأكد من التحديث قبل التحميل
+    draw();
     const link = document.createElement('a');
     link.download = 'my-framed-photo.png';
     link.href = canvas.toDataURL('image/png', 1.0);
