@@ -26,38 +26,33 @@ h1 {
     margin: 20px 0;
 }
 
-/* هناااا أهم نقطة — الإطار ثابت لا يتمدد */
+/* الإطار له أبعاد ثابتة — لا تتغير */
 .frame-area {
     margin: 20px auto;
     position: relative;
-    width: 1080px;   /* أبعاد ثابتة */
-    height: 1080px;  /* أبعاد ثابتة */
-    max-width: 90vw; /* عشان يشتغل على الموبايل */
-    max-height: 90vw;
+    width: 320px;     
+    height: 320px;    
     overflow: hidden;
     border-radius: 10px;
 }
 
-/* الصورة تتحرك وتتقص… لكن الإطار ثابت */
+/* الصورة الشخصية… بدون width/height نهائي */
 #userImage {
     position: absolute;
     top: 0;
     left: 0;
     transform-origin: center center;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;   /* تحل مشكلة التمدد */
     touch-action: none;
+    /* مفيش أي object-fit ولا أي width */
 }
 
-/* الإطار فوق ومش بيتغير */
+/* الإطار دائمًا فوق وثابت */
 #frame {
+    width: 100%;
+    height: 100%;
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;   /* يحافظ على الشكل الدائري/المربع */
     pointer-events: none;
 }
 
