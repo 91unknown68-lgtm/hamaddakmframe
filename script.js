@@ -11,10 +11,6 @@ let startX, startY;
 let initialDistance = 0;
 let initialScale = 1;
 
-// الكانفاس كبير للحفاظ على الجودة
-canvas.width = 1200;
-canvas.height = 1200;
-
 // اسم الإطار مضبوط
 frameImg.src = 'hamaddakmframe.png';
 
@@ -30,21 +26,32 @@ upload.addEventListener('change', (e) => {
     reader.readAsDataURL(file);
 });
 
-// رسم الصورة والإطار
+// رسم الصورة والإطار بأبعاد الصورة الأصلية للحفاظ على الجودة
 function draw() {
+    if (!userImg.complete || !frameImg.complete) return;
+
+    // الكانفاس يوازي أبعاد الصورة الأصلية
+    canvas.width = userImg.width;
+    canvas.height = userImg.height;
+
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    if (userImg.complete) {
-        const w = userImg.width * imgScale;
-        const h = userImg.height * imgScale;
-        ctx.drawImage(userImg, imgX, imgY, w, h);
-    }
-    if (frameImg.complete) {
-        ctx.drawImage(frameImg, 0, 0, canvas.width, canvas.height);
-    }
+
+    const w = userImg.width * imgScale;
+    const h = userImg.height * imgScale;
+    ctx.drawImage(userImg, imgX, imgY, w, h);
+
+    // رسم الإطار بنفس أبعاد الكانفاس
+    ctx.drawImage(frameImg, 0, 0, canvas.width, canvas.height);
 }
 
-frameImg.onload = draw;
-userImg.onload = draw;
+// تحميل الصورة مع الإطار بأعلى جودة
+downloadBtn.addEventListener('click', () => {
+    draw(); // تأكد من التحديث قبل التحميل
+    const link = document.createElement('a');
+    link.download = 'my-framed-photo.png';
+    link.href = canvas.toDataURL('image/png', 1.0);
+    link.click();
+});
 
 // تحريك الصورة بالماوس
 canvas.addEventListener('mousedown', (e) => {
@@ -107,10 +114,5 @@ canvas.addEventListener('touchend', () => {
     isDragging = false;
 });
 
-// تحميل الصورة مع الإطار بأقصى جودة
-downloadBtn.addEventListener('click', () => {
-    const link = document.createElement('a');
-    link.download = 'my-framed-photo.png';
-    link.href = canvas.toDataURL('image/png', 1.0);
-    link.click();
-});
+userImg.onload = draw;
+frameImg.onload = draw;
