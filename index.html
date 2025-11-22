@@ -1,28 +1,28 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>إطار العمدة حمد دكم</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class="container">
+    <div class="container">
+        <h1>إطار العمدة حمد دكم</h1>
+        <p class="subtitle">تركيب إطار العمدة حمد دكم لصورة الملف الشخصي، لدعم العمدة حمد دكم في انتخابات مجلس النواب</p>
 
-    <h1>إطار العمدة حمد دكم</h1>
-    <p class="subtitle">تركيب إطار العمدة حمد دكم لصورة الملف الشخصي، لدعم العمدة حمد دكم في انتخابات مجلس النواب</p>
+        <input type="file" id="upload" accept="image/*">
 
-    <input type="file" id="upload" accept="image/*">
+        <div class="frame-area">
+            <img id="userImage" src="">
+            <img id="frame" src="hamaddakmframe.png">
+        </div>
 
-    <div class="frame-area">
-        <img id="userImage" alt="">
-        <img id="frame" src="hamaddakmframe.png" alt="">
+        <button id="download">تحميل الصورة</button>
     </div>
 
-    <button id="downloadBtn" style="display:none;">تحميل الصورة</button>
+    <script src="script.js"></script>
 
-</div>
-
-<script src="script.js"></script>
 </body>
 </html>

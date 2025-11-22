@@ -26,31 +26,30 @@ h1 {
     margin: 20px 0;
 }
 
-/* الإطار له أبعاد ثابتة — لا تتغير */
+/* الإطار ثابت لا يتغير */
 .frame-area {
     margin: 20px auto;
     position: relative;
-    width: 320px;     
-    height: 320px;    
+    width: 350px;
+    height: 350px;
     overflow: hidden;
     border-radius: 10px;
 }
 
-/* الصورة الشخصية… بدون width/height نهائي */
+/* الصورة — NO WIDTH/HEIGHT — تتحرك وتتكبر فقط */
 #userImage {
     position: absolute;
     top: 0;
     left: 0;
     transform-origin: center center;
     touch-action: none;
-    /* مفيش أي object-fit ولا أي width */
 }
 
-/* الإطار دائمًا فوق وثابت */
+/* الإطار فوق ثابت */
 #frame {
+    position: absolute;
     width: 100%;
     height: 100%;
-    position: absolute;
     top: 0;
     left: 0;
     pointer-events: none;
