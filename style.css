@@ -1,66 +1,62 @@
 body {
-    margin: 0;
-    font-family: "Tajawal", sans-serif;
-    background: #000;
-    color: #fff;
-    text-align: center;
+  margin: 0;
+  font-family: "Tajawal", sans-serif;
+  background: #000;
+  color: #fff;
+  text-align: center;
 }
 
 .container {
-    width: 100%;
-    padding: 20px;
+  width: 100%;
+  padding: 20px;
 }
 
 h1 {
-    color: gold;
-    margin-bottom: 10px;
-    font-size: 28px;
+  color: gold;
+  margin-bottom: 10px;
+  font-size: 28px;
 }
 
 .subtitle {
-    margin-bottom: 20px;
-    color: #fff;
+  margin-bottom: 20px;
+  color: #fff;
 }
 
 #upload {
-    margin: 20px 0;
+  margin: 20px 0;
 }
 
-/* الإطار ثابت لا يتغير */
 .frame-area {
-    margin: 20px auto;
-    position: relative;
-    width: 350px;
-    height: 350px;
-    overflow: hidden;
-    border-radius: 10px;
+  position: relative;
+  width: 350px;
+  height: 350px;
+  margin: 20px auto;
+  overflow: hidden;
+  border-radius: 10px;
 }
 
-/* الصورة — NO WIDTH/HEIGHT — تتحرك وتتكبر فقط */
-#userImage {
-    position: absolute;
-    top: 0;
-    left: 0;
-    transform-origin: center center;
-    touch-action: none;
+#canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: none;
 }
 
-/* الإطار فوق ثابت */
 #frame {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    pointer-events: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
 }
 
 button {
-    background: gold;
-    padding: 12px 22px;
-    border: none;
-    border-radius: 8px;
-    font-size: 18px;
-    font-weight: bold;
-    margin-top: 15px;
+  background: gold;
+  padding: 12px 22px;
+  border: none;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 15px;
 }
