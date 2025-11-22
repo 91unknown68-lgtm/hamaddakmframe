@@ -1,118 +1,110 @@
-const upload = document.getElementById('upload');
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
-const downloadBtn = document.getElementById('download');
+const upload = document.getElementById("upload");
+const userImage = document.getElementById("userImage");
+const frame = document.getElementById("frame");
+const downloadBtn = document.getElementById("downloadBtn");
 
-let userImg = new Image();
-let frameImg = new Image();
-let imgX = 0, imgY = 0, imgScale = 1;
+let scale = 1;
+let posX = 0;
+let posY = 0;
+
 let isDragging = false;
 let startX, startY;
-let initialDistance = 0;
-let initialScale = 1;
 
-// اسم الإطار مضبوط
-frameImg.src = 'hamaddakmframe.png';
-
-// رفع صورة المستخدم
-upload.addEventListener('change', (e) => {
-    const file = e.target.files[0];
+upload.onchange = function () {
+    const file = upload.files[0];
     if (!file) return;
+
     const reader = new FileReader();
-    reader.onload = function(event) {
-        userImg.src = event.target.result;
-        downloadBtn.style.display = 'inline-block';
+    reader.onload = function (e) {
+        userImage.src = e.target.result;
+        userImage.style.display = "block";
+        downloadBtn.style.display = "inline-block";
+
+        scale = 1;
+        posX = 0;
+        posY = 0;
+        userImage.style.transform = `translate(0px, 0px) scale(1)`;
     };
     reader.readAsDataURL(file);
-});
+};
 
-// رسم الصورة والإطار بأبعاد الصورة الأصلية للحفاظ على الجودة
-function draw() {
-    if (!userImg.complete || !frameImg.complete) return;
-
-    // الكانفاس يوازي أبعاد الصورة الأصلية
-    canvas.width = userImg.width;
-    canvas.height = userImg.height;
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    const w = userImg.width * imgScale;
-    const h = userImg.height * imgScale;
-    ctx.drawImage(userImg, imgX, imgY, w, h);
-
-    // رسم الإطار بنفس أبعاد الكانفاس
-    ctx.drawImage(frameImg, 0, 0, canvas.width, canvas.height);
-}
-
-// تحميل الصورة مع الإطار بأعلى جودة
-downloadBtn.addEventListener('click', () => {
-    draw(); // تأكد من التحديث قبل التحميل
-    const link = document.createElement('a');
-    link.download = 'my-framed-photo.png';
-    link.href = canvas.toDataURL('image/png', 1.0);
-    link.click();
-});
-
-// تحريك الصورة بالماوس
-canvas.addEventListener('mousedown', (e) => {
+// سحب الصورة
+userImage.addEventListener("touchstart", (e) => {
     isDragging = true;
-    startX = e.offsetX - imgX;
-    startY = e.offsetY - imgY;
-});
-canvas.addEventListener('mousemove', (e) => {
-    if (isDragging) {
-        imgX = e.offsetX - startX;
-        imgY = e.offsetY - startY;
-        draw();
-    }
-});
-canvas.addEventListener('mouseup', () => isDragging = false);
-canvas.addEventListener('mouseleave', () => isDragging = false);
-
-// التكبير/التصغير بعجلة الماوس
-canvas.addEventListener('wheel', (e) => {
-    e.preventDefault();
-    imgScale += e.deltaY * -0.001;
-    if (imgScale < 0.1) imgScale = 0.1;
-    if (imgScale > 5) imgScale = 5;
-    draw();
+    startX = e.touches[0].clientX - posX;
+    startY = e.touches[0].clientY - posY;
 });
 
-// دعم اللمس للموبايل (سحب + pinch zoom)
-canvas.addEventListener('touchstart', (e) => {
-    if (e.touches.length === 1) {
-        isDragging = true;
-        const rect = canvas.getBoundingClientRect();
-        startX = e.touches[0].clientX - rect.left - imgX;
-        startY = e.touches[0].clientY - rect.top - imgY;
-    } else if (e.touches.length === 2) {
-        isDragging = false;
-        initialDistance = Math.hypot(
-            e.touches[0].clientX - e.touches[1].clientX,
-            e.touches[0].clientY - e.touches[1].clientY
-        );
-        initialScale = imgScale;
-    }
+userImage.addEventListener("touchmove", (e) => {
+    if (!isDragging) return;
+    posX = e.touches[0].clientX - startX;
+    posY = e.touches[0].clientY - startY;
+    userImage.style.transform = `translate(${posX}px, ${posY}px) scale(${scale})`;
 });
-canvas.addEventListener('touchmove', (e) => {
-    e.preventDefault();
-    const rect = canvas.getBoundingClientRect();
-    if (e.touches.length === 1 && isDragging) {
-        imgX = e.touches[0].clientX - rect.left - startX;
-        imgY = e.touches[0].clientY - rect.top - startY;
-        draw();
-    } else if (e.touches.length === 2) {
-        const currentDistance = Math.hypot(
-            e.touches[0].clientX - e.touches[1].clientX,
-            e.touches[0].clientY - e.touches[1].clientY
-        );
-        imgScale = initialScale * (currentDistance / initialDistance);
-        draw();
-    }
-});
-canvas.addEventListener('touchend', () => {
+
+userImage.addEventListener("touchend", () => {
     isDragging = false;
 });
 
-userImg.onload = draw;
-frameImg.onload = draw;
+// تكبير/تصغير الصورة بالـ pinch
+let initialDistance = 0;
+
+userImage.addEventListener("touchmove", (e) => {
+    if (e.touches.length === 2) {
+        let dx = e.touches[0].clientX - e.touches[1].clientX;
+        let dy = e.touches[0].clientY - e.touches[1].clientY;
+        let dist = Math.sqrt(dx * dx + dy * dy);
+
+        if (initialDistance !== 0) {
+            let delta = dist - initialDistance;
+            scale += delta * 0.002;
+            if (scale < 0.3) scale = 0.3;
+            if (scale > 5) scale = 5;
+
+            userImage.style.transform = `translate(${posX}px, ${posY}px) scale(${scale})`;
+        }
+
+        initialDistance = dist;
+    }
+});
+
+userImage.addEventListener("touchend", () => {
+    initialDistance = 0;
+});
+
+// حفظ الجودة العالية
+downloadBtn.onclick = function () {
+    const canvas = document.createElement("canvas");
+    canvas.width = 1080;
+    canvas.height = 1080;
+
+    const ctx = canvas.getContext("2d");
+
+    const frameImg = new Image();
+    frameImg.src = frame.src;
+
+    const userImg = new Image();
+    userImg.src = userImage.src;
+
+    Promise.all([
+        new Promise((res) => (frameImg.onload = res)),
+        new Promise((res) => (userImg.onload = res)),
+    ]).then(() => {
+        const scaleFactor = userImg.width / 320;
+
+        ctx.drawImage(
+            userImg,
+            -posX * scaleFactor,
+            -posY * scaleFactor,
+            userImg.width * scale,
+            userImg.height * scale
+        );
+
+        ctx.drawImage(frameImg, 0, 0, 1080, 1080);
+
+        const link = document.createElement("a");
+        link.download = "framed.png";
+        link.href = canvas.toDataURL("image/png", 1.0);
+        link.click();
+    });
+};
