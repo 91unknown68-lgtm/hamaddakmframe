@@ -12,6 +12,7 @@ let imgX = 0, imgY = 0, imgW = 1080, imgH = 1080;
 let scale = 1;
 let isDragging = false;
 let startX = 0, startY = 0;
+let imgLoaded = false;
 
 upload.addEventListener("change", e => {
     const file = e.target.files[0];
@@ -19,11 +20,13 @@ upload.addEventListener("change", e => {
 
     const reader = new FileReader();
     reader.onload = function (event) {
-        img.src = event.target.result;
+        img = new Image();
         img.onload = () => {
+            imgLoaded = true;
             fitImage();
             draw();
         };
+        img.src = event.target.result;
     };
     reader.readAsDataURL(file);
 });
@@ -44,11 +47,14 @@ function fitImage() {
 
 function draw() {
     ctx.clearRect(0, 0, 1080, 1080);
-    ctx.drawImage(img, imgX, imgY, imgW * scale, imgH * scale);
+    if (imgLoaded) {
+        ctx.drawImage(img, imgX, imgY, imgW * scale, imgH * scale);
+    }
     ctx.drawImage(frame, 0, 0, 1080, 1080);
 }
 
 canvas.addEventListener("mousedown", e => {
+    if (!imgLoaded) return;
     isDragging = true;
     startX = e.offsetX;
     startY = e.offsetY;
@@ -66,6 +72,7 @@ canvas.addEventListener("mousemove", e => {
 });
 
 canvas.addEventListener("wheel", e => {
+    if (!imgLoaded) return;
     e.preventDefault();
     const delta = e.deltaY * -0.001;
     scale += delta;
@@ -75,6 +82,7 @@ canvas.addEventListener("wheel", e => {
 });
 
 downloadBtn.addEventListener("click", () => {
+    if (!imgLoaded) return;
     const link = document.createElement("a");
     link.download = "framed.png";
     link.href = canvas.toDataURL("image/png", 1.0);
