@@ -11,8 +11,8 @@ let startX, startY;
 let initialDistance = 0;
 let initialScale = 1;
 
-// اسم الإطار بالضبط
-frameImg.src = 'hamaddakmfarme.png';
+// اسم الإطار مضبوط تمام
+frameImg.src = 'hamaddakmframe.png';
 
 // أبعاد الكانفاس
 canvas.width = 400;
@@ -62,7 +62,7 @@ canvas.addEventListener('mousemove', (e) => {
 canvas.addEventListener('mouseup', () => isDragging = false);
 canvas.addEventListener('mouseleave', () => isDragging = false);
 
-// التكبير/التصغير بالماوس
+// التكبير/التصغير بعجلة الماوس
 canvas.addEventListener('wheel', (e) => {
     e.preventDefault();
     imgScale += e.deltaY * -0.001;
@@ -71,7 +71,7 @@ canvas.addEventListener('wheel', (e) => {
     draw();
 });
 
-// دعم اللمس للموبايل (سحب)
+// دعم اللمس للموبايل (سحب + pinch zoom)
 canvas.addEventListener('touchstart', (e) => {
     if (e.touches.length === 1) {
         isDragging = true;
