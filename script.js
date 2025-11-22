@@ -11,12 +11,12 @@ let startX, startY;
 let initialDistance = 0;
 let initialScale = 1;
 
-// اسم الإطار مضبوط تمام
-frameImg.src = 'hamaddakmframe.png';
+// الكانفاس كبير للحفاظ على الجودة
+canvas.width = 1200;
+canvas.height = 1200;
 
-// أبعاد الكانفاس
-canvas.width = 400;
-canvas.height = 400;
+// اسم الإطار مضبوط
+frameImg.src = 'hamaddakmframe.png';
 
 // رفع صورة المستخدم
 upload.addEventListener('change', (e) => {
@@ -107,10 +107,10 @@ canvas.addEventListener('touchend', () => {
     isDragging = false;
 });
 
-// تحميل الصورة مع الإطار
+// تحميل الصورة مع الإطار بأقصى جودة
 downloadBtn.addEventListener('click', () => {
     const link = document.createElement('a');
     link.download = 'my-framed-photo.png';
-    link.href = canvas.toDataURL('image/png');
+    link.href = canvas.toDataURL('image/png', 1.0);
     link.click();
 });
