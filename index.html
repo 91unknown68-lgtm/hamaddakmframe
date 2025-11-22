@@ -7,22 +7,19 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
     <div class="container">
-        <h1>إطار العمدة حمد دكم</h1>
-        <p class="subtitle">تركيب إطار العمدة حمد دكم لصورة الملف الشخصي، لدعم العمدة حمد دكم في انتخابات مجلس النواب</p>
+        <h1>تركيب إطار العمدة حمد دكم لصورة الملف الشخصي</h1>
+        <p>لدعم العمدة حمد دكم في انتخابات مجلس النواب</p>
 
         <input type="file" id="upload" accept="image/*">
 
-        <div class="frame-area">
-            <img id="userImage" src="">
-            <img id="frame" src="hamaddakmframe.png">
+        <div class="editor">
+            <canvas id="canvas"></canvas>
         </div>
 
-        <button id="download">تحميل الصورة</button>
+        <button id="download" style="display:none;">تحميل الصورة</button>
     </div>
 
     <script src="script.js"></script>
-
 </body>
 </html>
