@@ -12,8 +12,6 @@ let initialScale = 1;
 
 // حجم العرض على الصفحة (مربع)
 const CANVAS_DISPLAY_SIZE = 500;
-
-// عامل تحسين الجودة
 const CANVAS_SCALE = 3;
 
 // ضبط الـ canvas الداخلي للحصول على جودة أعلى
@@ -25,14 +23,32 @@ canvas.style.height = CANVAS_DISPLAY_SIZE + 'px';
 // الإطار
 frameImg.src = 'hamaddakmframe.png';
 
-// رفع صورة المستخدم
+// رفع صورة المستخدم وتحويلها إلى PNG وتصحيح الاتجاه
 upload.addEventListener('change', (e) => {
     const file = e.target.files[0];
     if (!file) return;
+
     const reader = new FileReader();
     reader.onload = function(event) {
-        userImg.src = event.target.result;
-        downloadBtn.style.display = 'inline-block';
+        const tempImg = new Image();
+        tempImg.onload = function() {
+            // تصحيح الاتجاه باستخدام canvas مؤقت
+            const tempCanvas = document.createElement('canvas');
+            const tempCtx = tempCanvas.getContext('2d');
+            
+            // نحدد أبعاد canvas مؤقتة
+            tempCanvas.width = tempImg.width;
+            tempCanvas.height = tempImg.height;
+
+            // رسم الصورة على canvas المؤقت
+            tempCtx.drawImage(tempImg, 0, 0);
+
+            // تحويل الصورة إلى PNG
+            userImg.src = tempCanvas.toDataURL('image/png');
+
+            downloadBtn.style.display = 'inline-block';
+        };
+        tempImg.src = event.target.result;
     };
     reader.readAsDataURL(file);
 });
