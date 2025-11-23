@@ -32,20 +32,12 @@ upload.addEventListener('change', (e) => {
     reader.onload = function(event) {
         const tempImg = new Image();
         tempImg.onload = function() {
-            // تصحيح الاتجاه باستخدام canvas مؤقت
             const tempCanvas = document.createElement('canvas');
             const tempCtx = tempCanvas.getContext('2d');
-            
-            // نحدد أبعاد canvas مؤقتة
             tempCanvas.width = tempImg.width;
             tempCanvas.height = tempImg.height;
-
-            // رسم الصورة على canvas المؤقت
             tempCtx.drawImage(tempImg, 0, 0);
-
-            // تحويل الصورة إلى PNG
             userImg.src = tempCanvas.toDataURL('image/png');
-
             downloadBtn.style.display = 'inline-block';
         };
         tempImg.src = event.target.result;
@@ -74,13 +66,16 @@ function draw() {
     ctx.drawImage(frameImg, frameX, frameY, frameW, frameH);
 }
 
-// تحميل الصورة بجودة عالية
+// تحميل الصورة باستخدام Blob لتجنب مشاكل Page can't be loaded
 downloadBtn.addEventListener('click', () => {
     draw();
-    const link = document.createElement('a');
-    link.download = 'my-framed-photo.png';
-    link.href = canvas.toDataURL('image/png', 1.0);
-    link.click();
+    canvas.toBlob((blob) => {
+        const link = document.createElement('a');
+        link.download = 'my-framed-photo.png';
+        link.href = URL.createObjectURL(blob);
+        link.click();
+        URL.revokeObjectURL(link.href);
+    }, 'image/png', 1.0);
 });
 
 // تحريك الصورة بالماوس
